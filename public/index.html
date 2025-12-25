@@ -13,6 +13,7 @@
       padding: 0;
     }
 
+    /* CSS Variables */
     :root {
       --bg: #020617;
       --surface: #020617;
@@ -27,7 +28,7 @@
     }
 
     body.light-mode {
-      --bg: #879ac0;
+      --bg: #f3f4f6;
       --surface: #ffffff;
       --surface-soft: #f9fafb;
       --border-subtle: #e5e7eb;
@@ -39,31 +40,48 @@
       --ai-bubble: #f3f4f6;
     }
 
+    /* Global */
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
     body {
-      min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
         "Segoe UI", sans-serif;
       background-color: var(--bg);
       color: var(--text-main);
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
-      padding: 16px;
+      padding: 0;
       transition: background-color 0.3s ease, color 0.2s ease;
     }
 
-    /* Layout */
+    /* Chat container - Full height on mobile */
     #chat {
       width: 100%;
       max-width: 420px;
-      height: 80vh;
-      max-height: 680px;
+      height: 100%;
       background-color: var(--surface);
       border-radius: 18px;
       border: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
       overflow: hidden;
+    }
+
+    /* Desktop styles */
+    @media (min-width: 640px) {
+      body {
+        padding: 16px;
+        align-items: center;
+      }
+      #chat {
+        height: 80vh;
+        max-height: 680px;
+        border-radius: 18px;
+      }
     }
 
     /* Header */
@@ -101,7 +119,7 @@
       color: var(--text-muted);
     }
 
-    /* Theme toggle (simple, modern) */
+    /* Theme toggle */
     #theme-toggle {
       border: 1px solid var(--border-subtle);
       background-color: var(--surface);
@@ -224,7 +242,7 @@
       border: 1px solid var(--border-subtle);
     }
 
-    /* Input area */
+    /* Input area - Fixed at bottom */
     .input-box {
       border-top: 1px solid var(--border-subtle);
       background-color: var(--surface-soft);
@@ -232,6 +250,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-shrink: 0;
     }
 
     .input-box input {
@@ -285,35 +304,16 @@
       transform: translateY(1px);
       box-shadow: 0 2px 5px rgba(15, 23, 42, 0.6);
     }
-
-    /* Responsive */
-    @media (max-width: 640px) {
-      #chat {
-        height: 92vh;
-        max-height: none;
-        border-radius: 14px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      body {
-        padding: 6px;
-      }
-      #chat {
-        height: 100vh;
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
-      }
-    }
   </style>
 </head>
 
-<body>
+<body class="light-mode">
   <div id="chat">
     <header>
       <div class="title-wrap">
+        <span>Assistant</span>
         <span>Jagan's Bot</span>
+        <span>Ask anything, anytime</span>
       </div>
 
       <button id="theme-toggle" aria-label="Toggle theme">
@@ -342,6 +342,7 @@
     </div>
   </div>
 
+  <!-- Socket.io (only works if your backend serves /socket.io/socket.io.js) -->
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = typeof io !== "undefined" ? io() : null;
@@ -378,11 +379,14 @@
       if (e.key === "Enter") send();
     });
 
-    // Theme toggle
+    // Theme toggle - Default light mode
     const themeToggle = document.getElementById("theme-toggle");
     const body = document.body;
-    const savedTheme = localStorage.getItem("theme") || "dark-mode";
-    body.classList.add(savedTheme);
+
+    // Load saved theme or default to light-mode
+    const savedTheme = localStorage.getItem("theme");
+    const currentTheme = savedTheme || "light-mode";
+    body.classList.add(currentTheme);
 
     themeToggle.addEventListener("click", (e) => {
       e.stopPropagation();
