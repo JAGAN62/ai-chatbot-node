@@ -57,16 +57,19 @@
       text-align: center;
       border-bottom: 3px solid rgba(102, 126, 234, 0.3);
       letter-spacing: 0.5px;
+      flex-shrink: 0;
     }
 
     #messages {
       flex: 1;
       padding: 25px;
       overflow-y: auto;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       gap: 15px;
       background: #f8f9fa;
+      min-height: 0;
     }
 
     #messages::-webkit-scrollbar {
@@ -131,6 +134,7 @@
       display: flex;
       gap: 12px;
       align-items: center;
+      flex-shrink: 0;
     }
 
     #input {
